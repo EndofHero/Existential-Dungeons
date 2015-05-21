@@ -7,6 +7,7 @@ public class WorldGenerator1 : MonoBehaviour {
 	static int tilesGenerated = 0;
 	int maxIterations = 3;
 	Vector3 deployAt = new Vector3(5,0,0);
+	
 
 	// Use this for initialization
 	void Start () {
@@ -20,8 +21,8 @@ public class WorldGenerator1 : MonoBehaviour {
 	
 	public void generateLand(int iterationsLeft, Vector3 deployAt) {
 		//Instantiate (GrassTile, new Vector3(5,0,0), Quaternion.identity);	
-		int x = Mathf.Abs(Random.Range(4,25));
-		int y = Mathf.Abs(Random.Range(4,25));
+		int x = Mathf.Abs(Random.Range(2,8));
+		int y = Mathf.Abs(Random.Range(2,8));
 		
 		print("x = " + x);
 		print("y = " + y);
@@ -46,9 +47,7 @@ public class WorldGenerator1 : MonoBehaviour {
 					generateLand( (iterationsLeft-1) , deployAt);
 				}
 			}
-			
-			int randomNumber = Mathf.Abs(Random.Range(1,5));
-			
+					
 			if(iterationsLeft > 0 && k == x-1) {
 				generateLand( (iterationsLeft-1) , deployAt);
 			}
@@ -57,6 +56,7 @@ public class WorldGenerator1 : MonoBehaviour {
 		}
 		
 		print("Tiles Generated = " + tilesGenerated);
+		
 	}
 	
 	public bool isEmpty(Vector3 deployAt) {
@@ -64,7 +64,7 @@ public class WorldGenerator1 : MonoBehaviour {
 		RaycastHit tileHit;
 		Transform hitTile = null;
 		
-		print(ray.ToString());
+		//print(ray.ToString());
 		
 		if(Physics.Raycast(ray, out tileHit)) {
 			//print("Casting the ray");

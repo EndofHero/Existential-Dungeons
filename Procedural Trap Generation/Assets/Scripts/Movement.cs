@@ -11,24 +11,24 @@ public class Movement : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		bool freeMove = true;
+		bool freeMove = false;
 		
 		Vector3 direction = Vector3.zero;
 		
 		//Get Input
-		if(Input.GetKey("space")) {
+		if(Input.GetKeyDown("space")) {
 			print("Hey, listen!");
 		}
-		else if(Input.GetKey("a")) {
+		else if(Input.GetKeyDown("a")) {
 			direction = new Vector3(-1,0,0);
 		}
-		else if(Input.GetKey("s")) {
+		else if(Input.GetKeyDown("s")) {
 			direction = new Vector3(0,-1,0);
 		}
-		else if(Input.GetKey("d")) {
+		else if(Input.GetKeyDown("d")) {
 			direction = new Vector3(1,0,0);
 		}
-		else if(Input.GetKey("w")) {
+		else if(Input.GetKeyDown("w")) {
 			direction = new Vector3(0,1,0);
 		}
 		
@@ -58,7 +58,7 @@ public class Movement : MonoBehaviour {
 		
 		if(hitTile != null) {
 			//print("hitTile is not null");
-			print(hitTile.ToString());
+			//print(hitTile.ToString());
 			if(hitTile.GetComponent<TileProperties>().isTraversable) {
 				//print("hitTile is traversable");
 				transform.position = transform.position += direction;
