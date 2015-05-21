@@ -1,0 +1,4 @@
+Generation Times: Max X = 4, Max Y = 25:
+8 seconds
+17 seconds
+7 seconds - 850 tiles
