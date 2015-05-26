@@ -39,10 +39,10 @@ public class WorldGenerator2 : MonoBehaviour {
 		int maxRoomY = 4;
 		
 		int x = (int) Mathf.Round(Random.Range(minRoomX,maxRoomX));
-		int y = (int) Mathf.Round(Random.Range(minRoomX,maxRoomX));
+		int y = (int) Mathf.Round(Random.Range(minRoomY,maxRoomY));
 		
 		int randX = (int) Mathf.Abs(Random.Range(0, x-1));
-		int randY = (int) Mathf.Abs(Random.Range(0, y-1));
+		//int randY = (int) Mathf.Abs(Random.Range(0, y-1));
 		
 		print("newStartingX = " + newStartingX);
 		print("x = " + x);
