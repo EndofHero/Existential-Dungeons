@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Movement : MonoBehaviour {
 	
@@ -10,14 +11,17 @@ public class Movement : MonoBehaviour {
 	int numberOfTiles = 2;
 	int selectedTile = 0;
 	Transform[] tiles;
-	
+	List<Transform> world = new List<Transform>();
 	public Material[] materials;
 	Renderer sampleTile;
-	
+	string[] tileNames;
 	string fileName = "";
 	
 	// Use this for initialization
 	void Start () {
+		tileNames = new string[numberOfTiles];
+		tileNames[0] = "Wall";
+		tileNames[1] = "Grass";
 		tiles = new Transform[numberOfTiles];
 		tiles[0] = wall;
 		tiles[1] = grass;
@@ -97,7 +101,10 @@ public class Movement : MonoBehaviour {
 		GUI.skin.label.alignment = TextAnchor.UpperRight;
 		GUI.Label(coords, "(" + transform.position.x + "," + transform.position.y + ")");
 	}
-	
+	public void create(Transform creation, Vector3 position, Quaternion id) {
+		Transform newTile = Instantiate(creation,position,Quaternion.identity) as Transform;
+		world.Add(newTile);
+	}
 	public void nextTile() {
 		if(selectedTile + 1 == numberOfTiles) {
 			selectedTile = 0;
@@ -146,7 +153,7 @@ public class Movement : MonoBehaviour {
 		
 		delete(hitTile);
 		
-		Instantiate (tile, transform.position + new Vector3(0f,0f,.01f), Quaternion.identity);
+		create (tile, transform.position + new Vector3(0f,0f,.01f), Quaternion.identity);
 	}
 	
 	public void save() {
@@ -242,7 +249,10 @@ public class Movement : MonoBehaviour {
 	}
 	
 	public void destroyLand() {
-		
+		foreach (Transform tile in world) {
+			Destroy(tile.gameObject);
+		}
+		world.Clear();
 	}
 	
 	public void generateLand(Room room) {
@@ -256,10 +266,10 @@ public class Movement : MonoBehaviour {
 				
 				switch(room.getArrayValue(k,j)) {
 					case 0:
-						Instantiate (wall, tempVector, Quaternion.identity);
+						create (wall, tempVector, Quaternion.identity);
 						break;
 					case 1:
-						Instantiate (grass, tempVector, Quaternion.identity);
+						create (grass, tempVector, Quaternion.identity);
 						break;
 				}
 			}
