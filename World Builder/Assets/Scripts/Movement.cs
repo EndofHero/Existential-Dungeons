@@ -3,12 +3,26 @@ using System.Collections;
 
 public class Movement : MonoBehaviour {
 	
+	//Transforms
 	public Transform grass;
 	public Transform wall;
+	//Tile Information
+	int numberOfTiles = 2;
+	int selectedTile = 0;
+	Transform[] tiles;
+	
+	public Material[] materials;
+	Renderer sampleTile;
+	
+	string fileName = "";
 	
 	// Use this for initialization
 	void Start () {
-	
+		tiles = new Transform[numberOfTiles];
+		tiles[0] = wall;
+		tiles[1] = grass;
+		
+		sampleTile = transform.Find("Sample Tile").GetComponent<Renderer>();
 	}
 	
 	// Update is called once per frame
@@ -19,7 +33,7 @@ public class Movement : MonoBehaviour {
 		
 		//Get Input
 		if(Input.GetKeyDown("space")) {
-			print("Hey, listen!");
+			tryToPlace(tiles[selectedTile]);
 		}
 		else if(Input.GetKeyDown("a")) {
 			direction = new Vector3(-1,0,0);
@@ -34,10 +48,10 @@ public class Movement : MonoBehaviour {
 			direction = new Vector3(0,1,0);
 		}
 		else if(Input.GetKeyDown("q")) {
-			tryToPlace(wall);
+			previousTile();
 		}
 		else if(Input.GetKeyDown("e")) {
-			tryToPlace(grass);
+			nextTile();
 		}
 		else if(Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown("h")) {
 			save();
@@ -51,9 +65,59 @@ public class Movement : MonoBehaviour {
 			move(direction);
 		}
 		else {
-			//print("Trying to freemove");
 			transform.position = transform.position += direction;
 		}
+	}
+	
+	void OnGUI() {
+		Rect brush = new Rect(0, 0, 200, 25);
+	   
+		GUI.Label(brush, "File Name: ");
+	   
+		Event e = Event.current;
+		bool unfocus = false;
+		if (e.type == EventType.KeyDown && e.keyCode == KeyCode.Return) {
+				e.Use();
+				unfocus = true;
+		}
+	   
+		brush.x += 200;
+		GUI.SetNextControlName("fileName");
+		fileName = GUI.TextField(brush, fileName);
+	   
+		brush.y -= 200;
+		GUI.SetNextControlName("nofocus");
+		GUI.TextField(brush, "");	   
+	   
+		if (unfocus) {
+				GUI.FocusControl("nofocus");
+		}
+		
+		Rect coords = new Rect(0,0,Screen.width,Screen.height);
+		GUI.skin.label.alignment = TextAnchor.UpperRight;
+		GUI.Label(coords, "(" + transform.position.x + "," + transform.position.y + ")");
+	}
+	
+	public void nextTile() {
+		if(selectedTile + 1 == numberOfTiles) {
+			selectedTile = 0;
+		}
+		else {
+			selectedTile++;
+		}
+		
+		sampleTile.sharedMaterial = materials[selectedTile];
+	}
+	
+	public void previousTile() {
+		if(selectedTile - 1 == -1) {
+			selectedTile = numberOfTiles-1;
+		}
+		else {
+			selectedTile--;
+		}
+		
+		sampleTile.sharedMaterial = materials[selectedTile];
 	}
 	
 	void move(Vector3 direction) {
@@ -86,6 +150,9 @@ public class Movement : MonoBehaviour {
 	}
 	
 	public void save() {
+		print(fileName);
+		//Move cursor to (0,0,0)
+		transform.position = new Vector3(0,0,0);
 		
 		string roomData = "";
 		int x = 0;
@@ -140,11 +207,19 @@ public class Movement : MonoBehaviour {
 		print("=========================================");
 		
 		//Save the room to a file
-		System.IO.File.WriteAllText("D:\\Existential-Dungeons\\Procedural Trap Generation\\Assets\\Data\\Resources\\test2" + ".txt", roomData);
+		
+		System.IO.File.WriteAllText("D:\\Existential-Dungeons\\World Builder\\Assets\\Data\\Resources\\" + fileName + ".txt", roomData);
+		fileName = "";
 	}
 	
 	public void loadRoom() {
-		TextAsset roomFile = Resources.Load<TextAsset>("test");
+		
+		destroyLand();
+		
+		transform.position = Vector3.zero;
+				
+		TextAsset roomFile = Resources.Load<TextAsset>(fileName);
+		fileName = "";
 		Room room;
 		string[] values = roomFile.text.Split(',');
 		
@@ -164,6 +239,10 @@ public class Movement : MonoBehaviour {
 		
 		print(room.toString());
 		generateLand(room);
+	}
+	
+	public void destroyLand() {
+		
 	}
 	
 	public void generateLand(Room room) {
